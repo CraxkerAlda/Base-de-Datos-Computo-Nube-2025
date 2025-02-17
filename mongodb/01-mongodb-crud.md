@@ -321,3 +321,113 @@ db.libros.find({}, {titulo:1, editorial:1, _id:0})
 ```json
 db.libros.find({editorial: 'Planeta'}, {titulo:1, editorial:1, _id:0})
 ```
+
+
+## Operador Exists (Permite saber si un campo se encuentra o no en un documento)
+
+```json
+db.libros.find(
+  { editorial: {$exists:true} }
+  )
+```
+
+```json
+db.libros.insertOne({
+  _id:10,
+  titulo: 'Mongo en entornos graficos',
+  editorial: 'Terra',
+  precio: 125
+  }
+)
+```
+
+1. Mostrar todos lo documentos que no contengan el campo cantidad
+
+```json
+db.libros.find(
+  { cantidad: {$exists:false} }
+  )
+```
+
+
+## Operador Type (Permite preguntar si un determinado campo corresponde con un tipo)
+
+[Operador Type](https://www.mongodb.com/docs/manual/reference/operator/query/type/#mongodb-query-op.-type)
+
+1. Mostrar todos los documentos donde el precio sean doubles
+
+```json
+db.libros.find(
+  { precio: {$type:1} }
+  )
+```
+
+```json
+db.libros.find(
+  { precio: {$type:16} }
+  )
+```
+
+```json
+db.libros.insertOne({
+  _id:11,
+  titulo: 'IA',
+  editorial: 'Terra',
+  precio: 125.4,
+  cantidad:20
+  }
+)
+```
+
+```json
+db.libros.find( { precio: { $type: 1 } }, {_id:0, cantidad:0} )
+```
+
+
+```json
+db.libros.insertMany([
+ {
+    _id: 12,
+    titulo: 'IA',
+    editorial: 'Terra',
+    precio: 125, 
+	cantidad: 20
+  },
+  {
+    _id: 13,
+    titulo: 'Python para todos',
+    editorial: 2001,
+    precio: 200, 
+	cantidad: 30
+  }]
+  )
+```
+
+1. Seleccionar los documentos donde el precio sea de tipo entero
+
+```json
+db.libros.find( {editorial: {$type:16}})
+db.libros.find( {editorial: {$type:'int'}})
+```
+
+2. Seleccionar todos los documentos donde la editorial se String
+
+```json
+db.libros.find( {editorial: {$type:2}})
+db.libros.find( {editorial: {$type:'String'}})
+```
+
+## Practica de consultas
+1. Instalar las Tools de MongoDB
+[DatabaseTools](https://www.mongodb.com/try/download/database-tools)
+
+
+2. Cargar el Json Empleados (Debemos estar ubicados en la carpeta donde se encuentra el json empleados)
+
+- En local:
+    Comando:
+      mongoimport --db curso --collection empleados --file empleados.json
+
+- Docker:
+    comando:
+      mongoimport --port 80 --db curso --collection empleados --file empleados.json
