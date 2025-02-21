@@ -431,3 +431,258 @@ db.libros.find( {editorial: {$type:'String'}})
 - Docker:
     comando:
       mongoimport --port 80 --db curso --collection empleados --file empleados.json
+
+# Modificando Documentos
+## Comandos importantes
+
+1. UpdateOne -> Modificar un solo documento
+2. UpdateMany -> Modificar multiples documentos
+3. ReplaceOne -> Sustituir el contenido completo de un documento
+
+```json
+db.collection.updateOne(
+  {filtro},
+  {operador: }
+)
+```
+
+[Operador Update](https://www.mongodb.com/docs/manual/reference/operator/update/)
+
+### Operador set 
+
+1. Modificar un documento
+
+```json
+db.collection.updateOne({})
+
+db.libros.updateOne({titulo: 'Pyton para todos'}, {$set:{titulo:'Java para Todos'}})
+```
+
+
+2. Actualizar el precio a 100 y la cantidad a 50 para el id: 10
+
+```json
+db.libros.updateOne({_id:10}, {$set:{precio:100, cantidad:50}})
+```
+
+#### Modificar Multiples Documentos
+
+-- Modificar todos los ducumentos  sea mayor a 100 a un precio de 150
+
+```json
+db.libros.updateMany(
+  {precio:{$gt:100}},
+  {$set:{precio:150}}
+)
+```
+
+2. Operador $inc y $mul
+
+-Actualizar con un incremento de 5 todos los elementos
+
+```json
+db.libros.updateMany(
+  {},
+  {$inc:{precio:5}}
+)
+```
+
+-Actualizar con multiplicación de 2 todos los que la cantidad
+sean mayores a 20
+
+```json
+db.libros.updateMany({cantidad:{$gt:20}},{$mul:{cantidad:2}})
+```
+
+--Actualizar todos los documentos donde el precio sea mayor a 20 y
+-- se multiplique por 2 la cantidad y el precio 
+
+```json
+db.libros.updateMany(
+  {precio:{$gt:20}},
+  {$mul:{cantidad:2, precio:2}}
+)
+```
+
+
+3. Reemplazar Documentos {ReplaceOne}
+
+```Json
+db.libros.replaceOne({_id:2}, 
+    {
+      titulo:'Cartas a Milena', 
+      autor: 'Franz Kafka',
+      precio: 500
+    }
+)
+```
+
+# Borrar Documentos
+
+1. deleteOne -> Elimina un solo documento
+2. deleteMany -> Elimina Multiples Documentos
+
+1. Eliminar el documento con id 2 
+
+```json
+db.libros.deleteOne({_id:2})
+```
+
+2. Eliminar los documentos donde la cantidad sea mayor o igual a 150
+
+```json
+db.libros.deleteOne(
+  {cantidad:{$gte:150}}
+)
+```
+
+```json
+db.libros.deleteMany(
+  {cantidad:{$gte:100}}
+)
+```
+
+# Expresiones Regulares
+
+1. Buscar los libros que contengan el titulo la letra "t"
+
+```json
+db.libros.find({titulo:/t/})
+```
+
+2. Buscar los libros que en el titulo contengan la palabra Json
+
+```json
+db.libros.find({titulo:/Json/})
+```
+
+3. Buscar todos los documentos que en el titulo terminen en tos 
+
+```json
+db.libros.find({titulo:/tos$/})
+```
+
+4. Todos los documentos que en el titulo comiencen con Java
+
+```json
+db.libros.find({titulo:/^J/})
+```
+
+# Operador $regex
+
+[Operador Regex](https://www.mongodb.com/docs/manual/reference/operator/query/regex/)
+
+-- Seleccionar los libros que contengan la palabra para en el titulo
+
+```json
+db.libros.find({titulo:{$regex: 'para'}})
+```
+
+```json
+db.libros.find({titulo:{$regex: 'JSON'}})
+```
+
+```json
+db.libros.find({titulo:{$regex: /JSON/}})
+```
+
+- Distinguir entre mayusculad y minusculas 
+
+```json
+db.libros.find({titulo:{$regex: /json/}}) -> No distingue entre mayusculas y minusculas 
+```
+
+```json
+db.libros.find({titulo:{$regex: /json/, $options:'i'}}) 
+
+db.libros.find({titulo:{$regex: /json/i}}) 
+```
+
+
+-- Seleccionar todos los libros que comiencen con j o J
+
+```json
+db.libros.find({titulo:{$regex:/^j/i}})
+```
+
+-- Seleccionar todos los libros que terminen con es
+
+```json
+db.libros.find({titulo:{$regex:/es$/i}})
+```
+
+# Metodos sort (Ordenar Documentos)
+
+1. Ordenar los libros de manera ascendente por el precio 
+
+```json
+db.libros.find({}, {titulo:1, precio:1, _id:0}).sort({precio:1})
+```
+
+2. Ordenar los libros de manera descendente por el precio 
+
+```json
+db.libros.find({}, {titulo:1, precio:1, _id:0}).sort({precio:-1})
+```
+
+3. Ordenar los libros de manera ascendente por la editorial y de manera descendente
+por el precio, mostrando el titulo, precio, editorial
+
+```json
+db.libros.find({}, {titulo:1, precio:1, _id:0, editorial:1}).sort({editorial:1, precio:-1})
+```
+
+# Otros Métodos  skip, limit, size 
+
+```json
+db.libros.find({}).size()
+```
+
+```json
+db.libros.find({titulo:{$regex:/Java/i}}).size()
+```
+
+-- Buscar todos los libros pero mostrando los dos primeros
+
+```json
+db.libros.find({}, {titulo:1, editorial:1, precio:1, _id:0}).limit(2)
+```
+-- Mostar los 3 ultimos libros
+
+```json
+db.libros.find({}, {titulo:1, editorial:1, precio:1, _id:0}).sort({precio:-1}).limit(3)
+```
+
+-- Seleccionar todos los libros oredenados por titulo de forma descendente
+saltando los dos primeros documentos y mostrando el tamaño
+
+```json
+db.libros.find({}).sort({titulo:-1}).skip(2).size()
+```
+
+# Borrar Colecciones y Bases de Datos
+
+```json
+use db5
+
+db.createCollection('ejemplo')
+
+show collection
+
+db.ejemplo.insertOne({ 
+  nombre: 'Cghapuin'
+  }
+)
+```
+
+- Eliminar coleccion
+
+```json
+db.ejemplo.drop()
+```
+
+- Eliminar base de datos
+
+```json
+db.dropDatabase()
+```
