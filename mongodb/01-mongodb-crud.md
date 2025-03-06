@@ -592,6 +592,8 @@ db.libros.find({titulo:{$regex: /JSON/}})
 db.libros.find({titulo:{$regex: /json/}}) -> No distingue entre mayusculas y minusculas 
 ```
 
+- Distinguir entre mayusculad y minusculas 
+
 ```json
 db.libros.find({titulo:{$regex: /json/, $options:'i'}}) 
 
@@ -686,3 +688,4 @@ db.ejemplo.drop()
 ```json
 db.dropDatabase()
 ```
+
